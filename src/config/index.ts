@@ -16,7 +16,8 @@ const schemaValidate = joi
     REDIS_URL: joi.string(),
     REDIS_HOST: joi.string(),
     REDIS_PORT: joi.number(),
-    REDIS_PASSWORD: joi.string()
+    REDIS_PASSWORD: joi.string(),
+    SECRET: joi.string(),
   })
   .unknown()
   .required();
@@ -31,12 +32,13 @@ const nonProdEnvironments = ["development", "dev", "staging"];
 
 export const config = {
   port: {
-    HTTP_PORT: envVal.HTTP_PORT
+    HTTP_PORT: envVal.HTTP_PORT,
   },
   NODE_ENV: envVal.NODE_ENV,
   Redis: {
     PORT: envVal,
     HOST: envVal.REDIS_HOST,
-    PASSWORD: envVal.REDIS_PASSWORD
-  }
+    PASSWORD: envVal.REDIS_PASSWORD,
+  },
+  Secret: envVal.SECRET,
 };
