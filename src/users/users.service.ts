@@ -19,6 +19,11 @@ export class UserService {
   createUser = async (req: Request, res: Response) => {
     try {
       const { email, username, fullName, imageUrl } = req.body;
+
+      if (!email || !username || !fullName) {
+        return res.status(400).send("please enter email, username, andfullname");
+      }
+      
       const result = await this.prisma.user.create({
         data: {
           email,
