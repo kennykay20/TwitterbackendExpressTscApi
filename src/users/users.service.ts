@@ -19,12 +19,11 @@ export class UserService {
   createUser = async (req: Request, res: Response) => {
     try {
       const { email, username, fullName, imageUrl } = req.body;
-      console.log(email, username, fullName, imageUrl);
       const result = await this.prisma.user.create({
         data: {
-          email: email,
-          username: username,
-          fullName: fullName,
+          email,
+          username,
+          fullName,
           bio: `Hello I'm new on twitter`
         }
       });
@@ -66,7 +65,7 @@ export class UserService {
       });
       return res.json(user);
     } catch (error) {
-      res.status(404).send(`user with ${req.params.id} not found`);
+      res.status(404).send(`user with id ${req.params.id} not found`);
     }
   };
 /*

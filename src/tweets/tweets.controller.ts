@@ -21,6 +21,7 @@ export class TweetController {
     return await this.tweetSvc.getTweet(req, res);
   };
 
+  // does user update their tweet, we don't know if that be in future
   UpdateTweet = async (req: express.Request, res: express.Response) => {
     return await this.tweetSvc.updateTweet(req, res);
   };
