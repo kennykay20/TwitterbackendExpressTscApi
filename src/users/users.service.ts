@@ -12,7 +12,6 @@ export class UserService {
 
   createUser = async (req: Request, res: Response) => {
     try {
-      
       const { email, username, fullName, imageUrl } = req.body;
       console.log(email, username, fullName, imageUrl);
       const result = await this.prisma.user.create({
@@ -34,6 +33,9 @@ export class UserService {
   getAllUsers = async (req: Request, res: Response) => {
     try {
       const users = await this.prisma.user.findMany({
+        where: {
+          deleteAt: null
+        },
         include: {
           tweets: true
         }
@@ -49,7 +51,8 @@ export class UserService {
       const { id } = req.params;
       const user = await this.prisma.user.findUnique({
         where: {
-          id: Number(id)
+          id: Number(id),
+          deleteAt: null
         },
         include: {
           tweets: true
@@ -67,7 +70,8 @@ export class UserService {
       const { bio, fullName, imageUrl } = req.body;
       const result = await this.prisma.user.update({
         where: {
-          id: Number(id)
+          id: Number(id),
+          deleteAt: null
         },
         data: { bio, fullName, imageUrl }
       });
@@ -80,6 +84,19 @@ export class UserService {
   };
 
   deleteUser = async (req: Request, res: Response) => {
-    return "";
+    try {
+      const { id } = req.params;
+      this.prisma.user.update({
+        where: { id: Number(id), deleteAt: null },
+        data: {
+          deleteAt: Date.now().toString()
+        }
+      });
+      res.status(200).send(`user for id ${id} successfully deleted`);
+    } catch (error) {
+      res
+        .status(400)
+        .json({ message: `failed to delete the user `, error: error });
+    }
   };
 }
