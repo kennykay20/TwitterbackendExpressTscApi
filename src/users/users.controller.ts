@@ -4,7 +4,7 @@ import { UserService } from "./users.service";
 
 @autoInjectable()
 export class UserController {
-  private readonly userSvr: UserService;
+  private userSvr: UserService;
   constructor(userService: UserService) {
     this.userSvr = userService;
   }
