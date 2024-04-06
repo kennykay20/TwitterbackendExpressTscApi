@@ -10,6 +10,12 @@ export class UserService {
     this.prisma = new PrismaClient();
   }
 
+/*
+  Test with curl for createUser: if you don't have postman, thunder client extension to test
+  curl -X POST -H "Content-Type": "Application/json" \
+      -d '{"email": "", "username": "", "fullName": "", "imageUrl": ""}'
+      http://localhost:8082/api/v1/user/register
+*/
   createUser = async (req: Request, res: Response) => {
     try {
       const { email, username, fullName, imageUrl } = req.body;
@@ -63,7 +69,12 @@ export class UserService {
       res.status(404).send(`user with ${req.params.id} not found`);
     }
   };
-
+/*
+  Test with curl: 
+  curl -X PUT -H "Content-Type": "Application/json" \
+      -d '{"fullName": "james kay", "bio": "Hello everyone", "imageUrl": ""}'
+      http://localhost:8082/api/v1/users/1
+*/
   updateUser = async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
@@ -82,11 +93,15 @@ export class UserService {
         .json({ message: `failed to update the user `, error: error });
     }
   };
+/*
+  test with curl for delete
 
+  curl -X DELETE http://localhost:8082/users/:id
+*/
   deleteUser = async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
-      this.prisma.user.update({
+      await this.prisma.user.update({
         where: { id: Number(id), deleteAt: null },
         data: {
           deleteAt: Date.now().toString()
