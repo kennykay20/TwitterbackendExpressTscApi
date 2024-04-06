@@ -5,25 +5,25 @@ import { exec } from "child_process";
 
 @injectable()
 export class UserService {
-  private prisma;
+  prisma;
   constructor() {
     this.prisma = new PrismaClient();
   }
 
-/*
+  /*
   Test with curl for createUser: if you don't have postman, thunder client extension to test
-  curl -X POST -H "Content-Type": "Application/json" \
-      -d '{"email": "", "username": "", "fullName": "", "imageUrl": ""}'
-      http://localhost:8082/api/v1/user/register
+  curl -X POST -H "Content-Type":"application/json" \
+      -d '{"email": "test1@gmail.com", "username": "testify", "fullName": "test kay", "imageUrl": ""}' http://localhost:8082/api/v1/user/register
 */
   createUser = async (req: Request, res: Response) => {
     try {
       const { email, username, fullName, imageUrl } = req.body;
-
-      if (!email || !username || !fullName) {
-        return res.status(400).send("please enter email, username, andfullname");
+      if (!email ) {
+        return res
+          .status(400)
+          .send("please enter email");
       }
-      
+
       const result = await this.prisma.user.create({
         data: {
           email,
@@ -36,10 +36,13 @@ export class UserService {
     } catch (error) {
       console.log(error);
       await this.prisma.$disconnect();
-      process.exit(1);
+      return res.sendStatus(400)
+      //process.exit(1);
     }
   };
-
+  /*
+curl -X GET -H "Content-Type":"application/json" http://localhost:8082/api/v1/users
+*/
   getAllUsers = async (req: Request, res: Response) => {
     try {
       const users = await this.prisma.user.findMany({
@@ -73,9 +76,9 @@ export class UserService {
       res.status(404).send(`user with id ${req.params.id} not found`);
     }
   };
-/*
+  /*
   Test with curl: 
-  curl -X PUT -H "Content-Type": "Application/json" \
+  curl -X PUT -H "Content-Type":"application/json" \
       -d '{"fullName": "james kay", "bio": "Hello everyone", "imageUrl": ""}'
       http://localhost:8082/api/v1/users/1
 */
@@ -97,7 +100,7 @@ export class UserService {
         .json({ message: `failed to update the user `, error: error });
     }
   };
-/*
+  /*
   test with curl for delete
 
   curl -X DELETE http://localhost:8082/users/:id
@@ -124,8 +127,8 @@ export class UserService {
       where: {
         email
       },
-      select: {id: true}
+      select: { id: true }
     });
     return userExist;
-  }
+  };
 }

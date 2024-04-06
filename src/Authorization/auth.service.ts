@@ -24,21 +24,13 @@ export class AuthService {
       if (isUser) {
         // generate a new emailtoken for this user login the user to tweet and do other things
         emailToken = this.generateEmailToken();
-        await this.saveToken(emailToken, isUser.id);
+        await this.saveTokenOrCreateUser(emailToken, email, res);
         return res.status(200).json({ token: emailToken });
       }
       // if not found we call the createUser
-      const userData: userDetails = {
-        username: req.body.username,
-        email: req.body.email,
-        fullName: req.body.fullName,
-        imageUrl: req.body.imageUrl ?? ""
-      };
+
       emailToken = this.generateEmailToken();
-      const saveUserToken = await this.saveTokenAndCreateUser(
-        emailToken,
-        userData
-      );
+      const saveUserToken = await this.saveTokenOrCreateUser(emailToken, email, res);
       // and send an email token to the user throw sendGrid
 
       res.status(200).json({ token: emailToken });
@@ -63,23 +55,25 @@ export class AuthService {
     return Math.floor(10000000 + Math.random() * 90000000).toString();
   };
 
-  saveTokenAndCreateUser = async (token: string, userData: userDetails) => {
+  saveTokenOrCreateUser = async (token: string, email: string, res: Response) => {
     try {
       await this.prisma.token.create({
         data: {
           tokenType: tokenType.EMAIL,
           token,
-          expiration: expirationTime().toString(),
+          expiration: expirationTime(),
+          valid: true,
           user: {
             connectOrCreate: {
               where: {
-                email: userData.email
+                email
               },
               create: {
-                email: userData.email,
-                username: userData.username ?? "",
-                fullName: userData.fullName ?? "",
-                imageUrl: userData.imageUrl ?? ""
+                email,
+                username: "",
+                fullName: "",
+                imageUrl: "",
+                bio: "added through login"
               }
             }
           }
@@ -87,21 +81,7 @@ export class AuthService {
       });
     } catch (error) {
       console.log(error);
-    }
-  };
-
-  saveToken = async (token: string, userId: number) => {
-    try {
-      await this.prisma.token.create({
-        data: {
-          tokenType: tokenType.EMAIL,
-          token,
-          expiration: expirationTime().toString(),
-          userId
-        }
-      });
-    } catch (error) {
-      console.log(error);
+      res.status(404).json({error: `error occur ${error}`})
     }
   };
 }

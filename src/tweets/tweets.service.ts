@@ -12,6 +12,7 @@ export class TweetService {
 
   createTweet = async (req: Request, res: Response) => {
     try {
+
       const { userId, content, imageUrl } = req.body;
       if (!userId || !content) {
         return res.status(400).send("no content or userid");
@@ -22,7 +23,7 @@ export class TweetService {
       const result = await this.prisma.tweet.create({
         data: {
           id: shortUUID.generate(),
-          userId, // will be taken from the auth token soon
+          userId: parseInt(userId), // will be taken from the auth token soon
           content,
           imageUrl
         }

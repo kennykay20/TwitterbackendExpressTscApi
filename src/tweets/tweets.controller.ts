@@ -4,7 +4,7 @@ import { TweetService } from "./tweets.service";
 
 @autoInjectable()
 export class TweetController {
-  private readonly tweetSvc: TweetService;
+  private tweetSvc: TweetService;
   constructor(tweetService: TweetService) {
     this.tweetSvc = tweetService;
   }
