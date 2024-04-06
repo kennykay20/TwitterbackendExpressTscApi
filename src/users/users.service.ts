@@ -32,7 +32,7 @@ export class UserService {
           bio: `Hello I'm new on twitter`
         }
       });
-      res.json(result);
+      return res.json(result);
     } catch (error) {
       console.log(error);
       await this.prisma.$disconnect();
@@ -118,4 +118,14 @@ export class UserService {
         .json({ message: `failed to delete the user `, error: error });
     }
   };
+
+  getUserByEmail = async (email: string) => {
+    const userExist = await this.prisma.user.findUnique({
+      where: {
+        email
+      },
+      select: {id: true}
+    });
+    return userExist;
+  }
 }

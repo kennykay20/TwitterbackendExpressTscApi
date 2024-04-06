@@ -11,4 +11,8 @@ export class AuthController {
   UserLogin = async (req: express.Request, res: express.Response) => {
     return this.authSvc.userLogin(req, res);
   };
+
+  AuthenticateUser = async (req: express.Request, res: express.Response) => {
+    return this.authSvc.authenticateUser(req, res);
+  };
 }

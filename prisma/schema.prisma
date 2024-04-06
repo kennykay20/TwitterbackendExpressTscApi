@@ -13,8 +13,8 @@ datasource db {
 model User {
   id Int @id @default(autoincrement())
   email String @unique
-  fullName String
-  username String @unique
+  fullName String?
+  username String? @unique
   imageUrl String?
   bio String?
   isActive Boolean @default(false)
