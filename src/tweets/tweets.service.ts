@@ -38,7 +38,11 @@ export class TweetService {
 
   getAllTweet = async (req: Request, res: Response) => {
     try {
-      const allTweet = await this.prisma.tweet.findMany();
+      const allTweet = await this.prisma.tweet.findMany({
+        include: {
+          user: true
+        }
+      });
       res.json(allTweet);
     } catch (error) {
       res.status(404).send("error fetching data");
@@ -52,6 +56,9 @@ export class TweetService {
       const tweet = await this.prisma.tweet.findUnique({
         where: {
           id
+        },
+        include: {
+          user: true
         }
       });
       if (!tweet) {
