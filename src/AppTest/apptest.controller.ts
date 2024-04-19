@@ -1,8 +1,7 @@
-import { autoInjectable } from "tsyringe";
+import { Request, Response } from "express";
 
-@autoInjectable()
 export class AppController {
-  SayHello = () => {
-    return "Hello world";
+  SayHello = (req: Request, res: Response) => {
+    return res.send("Hello world");
   };
 }
